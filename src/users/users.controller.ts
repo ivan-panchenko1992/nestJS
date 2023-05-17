@@ -5,57 +5,49 @@ import {
   Post,
   Body,
   Put,
-  Redirect,
+  // Redirect,
   HttpCode,
   HttpStatus,
   Header,
-  Req,
-  Res,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
+  constructor(private userService: UsersService) {}
+
   @Get('all')
-  @Redirect('https://www.example.com', 301)
-  getAllUsers(@Req() req: Request, @Res() res: Response) {
-    res.status(200).send('hhelo');
-    return ['hello', 'new', 'one'];
+  // @Redirect('https://www.example.com', 301)
+  getAllUsers() {
+    return this.userService.getAllUsers();
   }
   @Get(':userId')
   @Header('operationId', '1234')
   getUserById(@Param('userId') userId) {
-    return {
-      name: 'Ivan',
-      position: 'SD3',
-      userId,
-    };
+    return this.userService.getUserById(Number(userId));
   }
   @Get('with-params/:userId')
   getUserWithParams(@Param() params) {
-    return {
-      name: 'Ivan',
-      position: 'SD3',
-      userId: params.userId,
-    };
+    console.log(params.userId);
+    return this.userService.getUserById(+params.userId);
   }
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
   createUser(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    return {
+    return this.userService.createUser({
       name: createUserDto.name,
       position: createUserDto.position,
       salary: createUserDto.salary,
-    };
+      id: this.userService.users.length + 1,
+    });
   }
   @Put(':id')
-  updateUser(@Body() updateUserDto: UpdateUserDto) {
-    return {
-      position: updateUserDto.position,
-      salary: updateUserDto.salary,
-    };
+  updateUser(@Body() updateUserDto: UpdateUserDto, @Param('id') id: number) {
+    return this.userService.updateUSer({
+      ...updateUserDto,
+      id: +id,
+    });
   }
 }
