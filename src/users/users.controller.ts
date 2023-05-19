@@ -40,7 +40,6 @@ export class UsersController {
       name: createUserDto.name,
       position: createUserDto.position,
       salary: createUserDto.salary,
-      id: this.userService.users.length + 1,
     });
   }
   @Put(':id')

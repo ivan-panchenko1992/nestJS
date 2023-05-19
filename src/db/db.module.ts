@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } from 'src/constans';
+import { Users } from 'src/users/user.model';
 
 @Module({
   imports: [
     SequelizeModule.forRoot({
       dialect: 'mysql',
-      host: DB_HOST,
+      host: 'localhost',
       port: 3306,
-      username: DB_USERNAME,
-      password: DB_PASSWORD,
-      database: DB_NAME,
-      models: [],
+      username: 'Ivan',
+      password: 'Panchenko21',
+      database: 'nestjs',
+      models: [Users],
     }),
   ],
 })
