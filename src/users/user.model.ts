@@ -20,7 +20,7 @@ export class Users extends Model<Users> {
   position: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.INTEGER,
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,

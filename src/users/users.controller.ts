@@ -8,6 +8,7 @@ import {
   // Redirect,
   HttpCode,
   HttpStatus,
+  HttpException,
   Header,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,12 +26,35 @@ export class UsersController {
   }
   @Get(':userId')
   @Header('operationId', '1234')
-  getUserById(@Param('userId') userId) {
-    return this.userService.getUserById(Number(userId));
+  async getUserById(@Param('userId') userId) {
+    try {
+      const result = await this.userService.getUserById(Number(userId));
+      console.log(result);
+      if (!result) {
+        throw new HttpException(
+          {
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            error: 'Something went wrong, please try again',
+          },
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+      }
+      return result;
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong, please try again',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        {
+          cause: error,
+        },
+      );
+    }
   }
   @Get('with-params/:userId')
   getUserWithParams(@Param() params) {
-    console.log(params.userId);
     return this.userService.getUserById(+params.userId);
   }
   @Post('/')

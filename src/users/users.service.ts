@@ -11,13 +11,25 @@ export class UsersService {
     private userModel: typeof Users,
   ) {}
   users = [{ name: 'ivan', position: 'sd3', id: 1, salary: 500 }];
-  getAllUsers() {
-    return this.users;
+  async getAllUsers() {
+    return await this.userModel.findAll();
   }
 
-  getUserById(id: number) {
-    console.log(typeof id);
-    return this.users.find((user) => user.id === id);
+  async getUserById(id: number) {
+    try {
+      const user = await this.userModel.findOne({
+        where: {
+          id,
+        },
+        raw: true,
+      });
+      if (user) {
+        return user;
+      }
+      return null;
+    } catch (error) {
+      return null;
+    }
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -30,15 +42,17 @@ export class UsersService {
       console.log(error);
     }
   }
-  updateUSer(updateUserDto: UpdateUserDataDto) {
-    this.users = this.users.map((el) => {
-      if (el.id === updateUserDto.id) {
-        return {
-          ...el,
-          ...updateUserDto,
-        };
-      }
-      return el;
+  async updateUSer(updateUserDto: UpdateUserDataDto) {
+    const { id, ...restParams } = updateUserDto;
+    const user = await this.userModel.findOne({
+      where: {
+        id,
+      },
     });
+    if (user) {
+      await user.update({
+        ...restParams,
+      });
+    }
   }
 }
