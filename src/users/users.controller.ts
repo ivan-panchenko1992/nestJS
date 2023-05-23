@@ -31,26 +31,11 @@ export class UsersController {
       const result = await this.userService.getUserById(Number(userId));
       console.log(result);
       if (!result) {
-        throw new HttpException(
-          {
-            status: HttpStatus.INTERNAL_SERVER_ERROR,
-            error: 'Something went wrong, please try again',
-          },
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('User not found', 400);
       }
       return result;
     } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.INTERNAL_SERVER_ERROR,
-          error: 'Something went wrong, please try again',
-        },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        {
-          cause: error,
-        },
-      );
+      throw new HttpException('User not found', 400);
     }
   }
   @Get('with-params/:userId')
