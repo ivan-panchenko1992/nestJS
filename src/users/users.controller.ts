@@ -8,8 +8,8 @@ import {
   // Redirect,
   HttpCode,
   HttpStatus,
-  HttpException,
   Header,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -31,11 +31,15 @@ export class UsersController {
       const result = await this.userService.getUserById(Number(userId));
       console.log(result);
       if (!result) {
-        throw new HttpException('User not found', 400);
+        throw new BadRequestException('User not found', {
+          cause: new Error(),
+        });
       }
       return result;
     } catch (error) {
-      throw new HttpException('User not found', 400);
+      throw new BadRequestException('User not found', {
+        cause: new Error(),
+      });
     }
   }
   @Get('with-params/:userId')

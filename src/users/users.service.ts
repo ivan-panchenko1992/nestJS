@@ -10,7 +10,6 @@ export class UsersService {
     @InjectModel(Users)
     private userModel: typeof Users,
   ) {}
-  users = [{ name: 'ivan', position: 'sd3', id: 1, salary: 500 }];
   async getAllUsers() {
     return await this.userModel.findAll();
   }
