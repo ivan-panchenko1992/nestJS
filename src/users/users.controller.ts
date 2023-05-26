@@ -10,10 +10,13 @@ import {
   HttpStatus,
   Header,
   BadRequestException,
+  ParseIntPipe,
+  UsePipes,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, createUserSchema } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
+import { ValidationPipePipe } from 'src/validation-pipe/validation-pipe.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -26,9 +29,9 @@ export class UsersController {
   }
   @Get(':userId')
   @Header('operationId', '1234')
-  async getUserById(@Param('userId') userId) {
+  async getUserById(@Param('userId', ParseIntPipe) userId: number) {
     try {
-      const result = await this.userService.getUserById(Number(userId));
+      const result = await this.userService.getUserById(userId);
       console.log(result);
       if (!result) {
         throw new BadRequestException('User not found', {
@@ -48,6 +51,7 @@ export class UsersController {
   }
   @Post('/')
   @HttpCode(HttpStatus.CREATED)
+  @UsePipes(new ValidationPipePipe(createUserSchema))
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser({
       name: createUserDto.name,
